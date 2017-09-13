@@ -4,8 +4,10 @@
 #=====================================
 
 import os
+import sys
 
 #global vars
+source_file = ""
 step = 0
 steps = 3
 IsDebug = False
@@ -22,7 +24,7 @@ def step_msg(msg):
 
 def clean_file():
 	f = open("tmp/tmp_source.txt", "w")
-	with open('samplecode.chirc',"r") as file:
+	with open(source_file,"r") as file:
 		for line in file:
 			if not line.isspace():
 				f.write(line)
@@ -71,7 +73,7 @@ def pre_create_binary():
 	IsFunc = False
 	lineNUM = 0
 	
-	source_file = open("tmp/tmp_binary_no_funcs.txt", "w")
+	tmp_nf_f = open("tmp/tmp_binary_no_funcs.txt", "w")
 	clean_file() #create clean tmp file without newlines
 	
 	with open("tmp/tmp_source.txt", "rU") as f:
@@ -85,9 +87,9 @@ def pre_create_binary():
 				aWords = line.replace('\n','').split(' ')
 				if (check_syntax(aWords[0]) == -1):
 					print("error line " + str(lineNUM))
-					source_file.close()
+					tmp_nf_f.close()
 					exit()
-				source_file.write(line)
+				tmp_nf_f.write(line)
 			if (IsFunc):
 				if (line.find("}") != -1):
 					if (IsDebug):
@@ -95,10 +97,10 @@ def pre_create_binary():
 					IsFunc = False
 
 	os.remove("tmp/tmp_source.txt") #clean temporary files
-	source_file.close()
+	tmp_nf_f.close()
 
 def create_binary():
-	finish_file = open("samplecode.cfg", "w")
+	finish_file = open("out.cfg", "w")
 	pre_create_binary() #removing all function definitions and cleaning newlines
 	
 	with open("tmp/tmp_binary_no_funcs.txt", "rU") as f:
@@ -144,7 +146,7 @@ def init_base_functions():
 def load_user_functions():
 	global FoundFuncs
 	IsFunc = False
-	with open("samplecode.chirc", "rU") as f:
+	with open(source_file, "rU") as f:
 		for line in f:
 			if line.startswith("void"):
 				FoundFuncs += 1
@@ -196,5 +198,13 @@ def compile_main():
 	step_msg("loading functions succeded (" + str(FoundFuncs) + ")")
 	create_binary()
 	
+def init_script():
+	global source_file
+	if len(sys.argv) < 2:
+		print("ERROR missing source file")
+		print("usage: chircohn.py <source_file>")
+	else:
+		source_file = sys.argv[1]
+		compile_main()
 	
-compile_main()
+init_script()
