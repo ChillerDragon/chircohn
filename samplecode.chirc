@@ -1,0 +1,12 @@
+echo init samplecode.chirc
+say_stuff()
+echo finished samplecode.chirc
+
+void say_stuff()
+{
+say ==========
+say helloworld
+say ==========
+say this is a sample script written in chricohn
+say compiled with ChillerDragon chricohn compiler
+}

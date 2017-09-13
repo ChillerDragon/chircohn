@@ -22,7 +22,7 @@ def step_msg(msg):
 
 def clean_file():
 	f = open("tmp/tmp_source.txt", "w")
-	with open('testcode.txt',"r") as file:
+	with open('samplecode.chirc',"r") as file:
 		for line in file:
 			if not line.isspace():
 				f.write(line)
@@ -98,7 +98,7 @@ def pre_create_binary():
 	source_file.close()
 
 def create_binary():
-	finish_file = open("compiled_code.txt", "w")
+	finish_file = open("samplecode.cfg", "w")
 	pre_create_binary() #removing all function definitions and cleaning newlines
 	
 	with open("tmp/tmp_binary_no_funcs.txt", "rU") as f:
@@ -144,7 +144,7 @@ def init_base_functions():
 def load_user_functions():
 	global FoundFuncs
 	IsFunc = False
-	with open("testcode.txt", "rU") as f:
+	with open("samplecode.chirc", "rU") as f:
 		for line in f:
 			if line.startswith("void"):
 				FoundFuncs += 1
