@@ -5,8 +5,6 @@
 
 import os
 
-#TODO: add tmp/ folder where all tmp files get stored
-
 #global vars
 step = 0
 steps = 3
@@ -23,13 +21,23 @@ def step_msg(msg):
 	step += 1
 
 def clean_file():
-	f = open("tmp_source.txt", "w")
+	f = open("tmp/tmp_source.txt", "w")
 	with open('testcode.txt',"r") as file:
 		for line in file:
 			if not line.isspace():
 				f.write(line)
 	f.close()
 
+def init_compiler():
+	if not os.path.exists("tmp"):
+		os.makedirs("tmp")
+		f = open("tmp/readme.txt","w")
+		f.write("==== chircohn compiler tmp folder ====\n")
+		f.write("This folder stores temporary files.\n")
+		f.write("They get created during compilation and removed after it.\n")
+		f.write("It is suggested to leave this folder empty.\n")
+		f.close()
+	
 def load_rcon_commands():
 	global rcon_cmds
 	with open("rcon_cmds_vanilla.txt") as f:
@@ -63,10 +71,10 @@ def pre_create_binary():
 	IsFunc = False
 	lineNUM = 0
 	
-	source_file = open("tmp_binary_no_funcs.txt", "w")
+	source_file = open("tmp/tmp_binary_no_funcs.txt", "w")
 	clean_file() #create clean tmp file without newlines
 	
-	with open("tmp_source.txt", "rU") as f:
+	with open("tmp/tmp_source.txt", "rU") as f:
 		for line in f:
 			lineNUM += 1
 			if (line.find("{") != -1):
@@ -86,14 +94,14 @@ def pre_create_binary():
 						print("found } line " + str(lineNUM))
 					IsFunc = False
 
-	os.remove("tmp_source.txt") #clean temporary files
+	os.remove("tmp/tmp_source.txt") #clean temporary files
 	source_file.close()
 
 def create_binary():
 	finish_file = open("compiled_code.txt", "w")
 	pre_create_binary() #removing all function definitions and cleaning newlines
 	
-	with open("tmp_binary_no_funcs.txt", "rU") as f:
+	with open("tmp/tmp_binary_no_funcs.txt", "rU") as f:
 		for line in f:
 			aWords = line.replace('\n','').split(' ')
 			if (check_syntax(aWords[0]) == 2):
@@ -112,7 +120,7 @@ def create_binary():
 			else: #no function --> just copy the plain code
 				finish_file.write(line)
 
-	os.remove("tmp_binary_no_funcs.txt") #clean temporary files
+	os.remove("tmp/tmp_binary_no_funcs.txt") #clean temporary files
 	finish_file.close()
 	
 def init_base_functions():
@@ -171,6 +179,8 @@ def compile_main():
 	print("===================================")
 	print("ChillerDragon's chircohn compiler")
 	print("===================================")
+	step_msg("init compiler")
+	init_compiler()
 	step_msg("init base functions")
 	init_base_functions()
 	step_msg("load rcon commands")
