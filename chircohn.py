@@ -60,6 +60,10 @@ def check_syntax(syntax):
 		if (IsDebug):
 			print("function found")
 		return 2
+	if syntax.startswith("#"):
+		if (IsDebug):
+			print("comment found")
+		return 3
 	print("Syntax error: '" + syntax + "' is no rcon command or function")
 	return -1
 	
