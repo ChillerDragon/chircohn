@@ -9,12 +9,45 @@ import sys
 #global vars
 source_file = ""
 step = 0
-steps = 3
+steps = 4
 IsDebug = False
 FoundFuncs = -1
 BaseFuncs = 0
+user_int = []
+user_int_name = []
+user_int_index = 0
 functions=[["" for x in range(3)] for y in range(2)]
 rcon_cmds=[]
+
+def check_ints():
+	global user_int
+	global user_int_name
+	global user_int_index
+	finish_file2 = open("out.cfg", "w")
+	
+	with open("tmp/out.cfg", "rU") as f:
+		for line in f:
+			aWords = line.replace('\n','').split(' ')
+			if (aWords[0] == "int"):
+				if (IsDebug):
+					print("Integer found")
+				if len(aWords) < 4:
+					print("ERROR wrong integer sytnax (user 'int name = value')")
+					finish_file2.close()
+					exit()
+				if (IsDebug):
+					print("Integer syntax check len[" + str(len(aWords)) + "/" + "4]")
+				if unicode(aWords[3], "utf-8").isnumeric():
+					user_int.append(aWords[3])
+					user_int_name.append(aWords[1])
+					user_int_index += 1
+				else:
+					print("ERROR value '" + aWords[3] + "' is not an integer")
+					exit()
+			else:
+				finish_file2.write(line)
+	os.remove("tmp/out.cfg") #clean temporary files
+	finish_file2.close()
 
 def step_msg(msg):
 	global step
@@ -104,7 +137,7 @@ def pre_create_binary():
 	tmp_nf_f.close()
 
 def create_binary():
-	finish_file = open("out.cfg", "w")
+	finish_file = open("tmp/out.cfg", "w")
 	pre_create_binary() #removing all function definitions and cleaning newlines
 	
 	with open("tmp/tmp_binary_no_funcs.txt", "rU") as f:
@@ -128,6 +161,7 @@ def create_binary():
 
 	os.remove("tmp/tmp_binary_no_funcs.txt") #clean temporary files
 	finish_file.close()
+	check_ints() #search for user variabales
 	
 def init_base_functions():
 	global BaseFuncs
@@ -179,6 +213,7 @@ def load_user_functions():
 
 	
 def compile_main():
+	global user_int_index
 	global FoundFuncs
 	global step
 	global steps
@@ -193,14 +228,22 @@ def compile_main():
 	load_rcon_commands()
 	
 	load_user_functions()
-	if (FoundFuncs and IsDebug):
-		for i in range(FoundFuncs + 1):
-			print("--------  Index[" + str(i) + "]  -----------")
-			print("Name: " + functions[1][i])
-			print("Code: \n" + functions[0][i])
-			print("functions: " + str(FoundFuncs) + " + 1")
+	if (IsDebug and FoundFuncs):
+			for i in range(FoundFuncs + 1):
+				print("--------  Index[" + str(i) + "]  -----------")
+				print("Name: " + functions[1][i])
+				print("Code: \n" + functions[0][i])
+				print("functions: " + str(FoundFuncs) + " + 1")
 	step_msg("loading functions succeded (" + str(FoundFuncs) + ")")
+	
 	create_binary()
+	
+	if (IsDebug and user_int_index > 0):
+		for i in range(user_int_index):
+			print("===== Int Index[" + str(i) + "] =====")
+			print("Name: " + user_int_name[i])
+			print("Value: "+ str(user_int[i]))
+	step_msg("loading ints succeded (" + str(user_int_index) + ")")
 	
 def print_help():
 	print("==== chircohn compiler manual page ====\n")
