@@ -202,12 +202,27 @@ def compile_main():
 	step_msg("loading functions succeded (" + str(FoundFuncs) + ")")
 	create_binary()
 	
+def print_help():
+	print("==== chircohn compiler manual page ====\n")
+	print("usage: chircohn.py <source_file> <options>")
+	print("\n=== options ===")
+	print("-v                for verbose output")
+	print("--help            to show this help")
+	
 def init_script():
+	global IsDebug
 	global source_file
 	if len(sys.argv) < 2:
 		print("ERROR missing source file")
-		print("usage: chircohn.py <source_file>")
+		print("usage: chircohn.py <source_file> <options>")
+		print("'chircohn.py --help' for help")
 	else:
+		for i in range(len(sys.argv)):
+			if sys.argv[i] == "-v":
+				IsDebug = True
+			if sys.argv[i] == "--help":
+				print_help()
+				exit()
 		source_file = sys.argv[1]
 		compile_main()
 	
