@@ -46,6 +46,7 @@ def check_ints():
 					exit()
 			else:
 				finish_file2.write(line)
+				print(aWords[0] + " != " + "int");
 	os.remove("tmp/out.cfg") #clean temporary files
 	finish_file2.close()
 
@@ -120,7 +121,7 @@ def pre_create_binary():
 				if (IsDebug):
 					print("found { line " + str(lineNUM))
 				IsFunc = True
-			if not line.startswith("void") and not IsFunc:
+			if not line.startswith("void") and not IsFunc and not line.startswith("int"):
 				aWords = line.replace('\n','').split(' ')
 				if (check_syntax(aWords[0]) == -1):
 					print("error line " + str(lineNUM))
