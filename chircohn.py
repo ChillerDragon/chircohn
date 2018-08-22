@@ -48,7 +48,8 @@ def check_ints():
 					exit()
 			else:
 				finish_file2.write(line)
-				print(aWords[0] + " != " + "int");
+				if (IsDebug):
+					print(aWords[0] + " != " + "int");
 	os.remove("tmp/out.cfg") #clean temporary files
 	finish_file2.close()
 
@@ -79,9 +80,15 @@ def init_compiler():
 def load_rcon_commands():
 	global rcon_cmds
 	global mod_cmds
-	with open("syntax/rcon_cmds_vanilla.txt") as f:
+	vanilla_file="syntax/vanilla_rcon_cmds.txt"
+	if (os.path.isfile(vanilla_file) == False):
+		print("Error vanilla file '" + str(vanilla_file) + "' not found")
+		exit()
+	with open(vanilla_file) as f:
 		rcon_cmds = f.readlines()
 	rcon_cmds = [x.strip() for x in rcon_cmds]
+	if (syntax_file == ""):
+		return
 	with open(syntax_file) as m:
 		mod_cmds = m.readlines()
 	mod_cmds = [x.strip() for x in mod_cmds]
