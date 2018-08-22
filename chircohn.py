@@ -38,7 +38,7 @@ def check_ints():
 					if len(aWords) < 4:
 						print("ERROR wrong integer sytnax (user 'int name = value')")
 						finish_file2.close()
-						exit()
+						exit(1)
 					if (IsDebug):
 						print("Integer syntax check len[" + str(len(aWords)) + "/" + "4]")
 					if unicode(aWords[3], "utf-8").isnumeric():
@@ -47,7 +47,7 @@ def check_ints():
 						user_int_index += 1
 					else:
 						print("ERROR value '" + aWords[3] + "' is not an integer")
-						exit()
+						exit(1)
 				else:
 					finish_file2.write(line)
 					if (IsDebug):
@@ -145,7 +145,7 @@ def pre_create_binary():
 				if (check_syntax(aWords[0]) == -1):
 					print("error line " + str(lineNUM))
 					tmp_nf_f.close()
-					exit()
+					exit(1)
 				tmp_nf_f.write(line)
 			if (IsFunc):
 				if (line.find("}") != -1):
@@ -173,7 +173,7 @@ def create_binary():
 				if func_index == -1:
 					print("Error loading function " + aWords[0] + "()")
 					finish_file.close()
-					exit()	
+					exit(1)
 				#replace function calls with the function code
 				finish_file.write(functions[0][func_index])
 			else: #no function --> just copy the plain code
@@ -211,7 +211,7 @@ def load_user_functions():
 				aWords = line.replace('()', '').replace('\n','').split(' ') #fish the function name		
 				if function_exist(aWords[1]):
 					print("ERROR function " + aWords[1] + " already exsists")
-					exit()
+					exit(1)
 				functions[1].append(aWords[1]) #store the function name in func array
 				functions[0].append("") #add empty array part for code
 			if (IsFunc):
@@ -221,7 +221,7 @@ def load_user_functions():
 					aWords = line.replace('()', '').replace('\n','').split(' ')
 					if (check_syntax(aWords[0]) == -1):
 						print("Syntax error in function " + functions[1][FoundFuncs] + "()")
-						exit()
+						exit(1)
 					functions[0][FoundFuncs] += line
 					
 			if (line.find("{") != -1):

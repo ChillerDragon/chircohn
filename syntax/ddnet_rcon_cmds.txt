@@ -1,5 +1,6 @@
 access_level
 access_status
+add_sqlserver
 add_sqlservers
 auth_add
 auth_add_p
