@@ -272,6 +272,7 @@ def print_help():
 	print("-v                for verbose output")
 	print("--help            to show this help")
 	print("-mod (file)       syntax file")
+	print("-o (file)         compiled outputfile")
 
 def init_script():
 	global IsDebug
