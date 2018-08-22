@@ -9,6 +9,7 @@ import sys
 #global vars
 source_file = ""
 syntax_file=""
+output_file=""
 step = 0
 steps = 4
 IsDebug = False
@@ -25,33 +26,37 @@ def check_ints():
 	global user_int
 	global user_int_name
 	global user_int_index
-	finish_file2 = open("out.cfg", "w")
-	
-	with open("tmp/out.cfg", "rU") as f:
-		for line in f:
-			aWords = line.replace('\n','').split(' ')
-			if (aWords[0] == "int"):
-				if (IsDebug):
-					print("Integer found")
-				if len(aWords) < 4:
-					print("ERROR wrong integer sytnax (user 'int name = value')")
-					finish_file2.close()
-					exit()
-				if (IsDebug):
-					print("Integer syntax check len[" + str(len(aWords)) + "/" + "4]")
-				if unicode(aWords[3], "utf-8").isnumeric():
-					user_int.append(aWords[3])
-					user_int_name.append(aWords[1])
-					user_int_index += 1
+	global output_file
+	if (output_file != ""):
+		finish_file2 = open(output_file, "w")
+		with open("tmp/out.cfg", "rU") as f:
+			for line in f:
+				aWords = line.replace('\n','').split(' ')
+				if (aWords[0] == "int"):
+					if (IsDebug):
+						print("Integer found")
+					if len(aWords) < 4:
+						print("ERROR wrong integer sytnax (user 'int name = value')")
+						finish_file2.close()
+						exit()
+					if (IsDebug):
+						print("Integer syntax check len[" + str(len(aWords)) + "/" + "4]")
+					if unicode(aWords[3], "utf-8").isnumeric():
+						user_int.append(aWords[3])
+						user_int_name.append(aWords[1])
+						user_int_index += 1
+					else:
+						print("ERROR value '" + aWords[3] + "' is not an integer")
+						exit()
 				else:
-					print("ERROR value '" + aWords[3] + "' is not an integer")
-					exit()
-			else:
-				finish_file2.write(line)
-				if (IsDebug):
-					print(aWords[0] + " != " + "int");
+					finish_file2.write(line)
+					if (IsDebug):
+						print(aWords[0] + " != " + "int");
+		finish_file2.close()
+		print("[info] linking '" + str(output_file) + "'")
+	else:
+		print("[info] skipped linking due to missing flag -o")
 	os.remove("tmp/out.cfg") #clean temporary files
-	finish_file2.close()
 
 def step_msg(msg):
 	global step
@@ -272,6 +277,7 @@ def init_script():
 	global IsDebug
 	global source_file
 	global syntax_file
+	global output_file
 	if len(sys.argv) < 2:
 		print("ERROR missing source file")
 		print("usage: chircohn.py <source_file> <options>")
@@ -283,6 +289,12 @@ def init_script():
 			if sys.argv[i] == "--help":
 				print_help()
 				exit()
+			if sys.argv[i] == "-o":
+				if ((i + 1) < len(sys.argv)):
+					output_file=sys.argv[i + 1]
+				else:
+					print("Error Missing file for the -o argument")
+					exit()
 			if sys.argv[i] == "-mod":
 				if ((i + 1) < len(sys.argv)):
 					syntax_file=sys.argv[i + 1]
