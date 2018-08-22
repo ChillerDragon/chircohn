@@ -8,6 +8,7 @@ import sys
 
 #global vars
 source_file = ""
+syntax_file=""
 step = 0
 steps = 4
 IsDebug = False
@@ -18,6 +19,7 @@ user_int_name = []
 user_int_index = 0
 functions=[["" for x in range(3)] for y in range(2)]
 rcon_cmds=[]
+mod_cmds=[]
 
 def check_ints():
 	global user_int
@@ -76,9 +78,14 @@ def init_compiler():
 	
 def load_rcon_commands():
 	global rcon_cmds
-	with open("rcon_cmds_vanilla.txt") as f:
+	global mod_cmds
+	with open("syntax/rcon_cmds_vanilla.txt") as f:
 		rcon_cmds = f.readlines()
-	rcon_cmds = [x.strip() for x in rcon_cmds] 
+	rcon_cmds = [x.strip() for x in rcon_cmds]
+	with open(syntax_file) as m:
+		mod_cmds = m.readlines()
+	mod_cmds = [x.strip() for x in mod_cmds]
+	rcon_cmds = rcon_cmds + mod_cmds
 
 def check_syntax(syntax):
 	for rcon in rcon_cmds:
@@ -252,10 +259,12 @@ def print_help():
 	print("\n=== options ===")
 	print("-v                for verbose output")
 	print("--help            to show this help")
-	
+	print("-mod (file)       syntax file")
+
 def init_script():
 	global IsDebug
 	global source_file
+	global syntax_file
 	if len(sys.argv) < 2:
 		print("ERROR missing source file")
 		print("usage: chircohn.py <source_file> <options>")
@@ -267,7 +276,19 @@ def init_script():
 			if sys.argv[i] == "--help":
 				print_help()
 				exit()
+			if sys.argv[i] == "-mod":
+				if ((i + 1) < len(sys.argv)):
+					syntax_file=sys.argv[i + 1]
+					if (os.path.isfile(syntax_file) == False):
+						print("Error '" + str(syntax_file) + "' is not a valid file path")
+						exit()
+				else:
+					print("Error Missing file for the -mod argument")
+					exit()
 		source_file = sys.argv[1]
+		if (os.path.isfile(source_file) == False):
+			print("Error '" + str(source_file) + "' is not a valid source file path")
+			exit()
 		compile_main()
-	
+
 init_script()
